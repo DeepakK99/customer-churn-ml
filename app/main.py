@@ -1,7 +1,14 @@
+import logging
+import time
 from fastapi import FastAPI
 from churn.predict import load_model, predict_churn
 
 from pydantic import BaseModel, Field
+from app.logging_config import configure_logging
+
+configure_logging()
+
+logger = logging.getLogger(__name__)
 
 
 class CustomerRequest(BaseModel):
@@ -33,4 +40,17 @@ def health():
 
 @app.post("/predict")
 def predict(customer: CustomerRequest):
-    return predict_churn(model, customer.model_dump())
+    start = time.perf_counter()
+
+    result = predict_churn(model, customer.model_dump())
+
+    duration = time.perf_counter() - start
+
+    logger.info(
+        "prediction_completed | probability=%.4f | prediction=%d | duration_ms=%.2f",
+        result["churn_probability"],
+        result["churn_prediction"],
+        duration * 1000,
+    )
+
+    return result
