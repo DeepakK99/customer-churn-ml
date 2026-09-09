@@ -26,6 +26,12 @@ jobs:
 
       - name: Install project
         run: pip install -e ".[dev]"
+      
+      - name: Check formatting
+        run: ruff format --check .
+
+      - name: Lint
+        run: ruff check .
 
       - name: Run tests
         run: pytest

@@ -1,7 +1,6 @@
 import joblib
 import pandas as pd
 
-
 MODEL_PATH = "models/churn_pipeline.joblib"
 THRESHOLD = 0.31
 
@@ -21,6 +20,7 @@ def predict_churn(model, customer: dict):
         "churn_probability": float(probability),
         "churn_prediction": prediction,
     }
+
 
 if __name__ == "__main__":
     model = load_model()

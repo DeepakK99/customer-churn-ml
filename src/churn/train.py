@@ -1,6 +1,5 @@
 import joblib
 import pandas as pd
-
 from sklearn.metrics import (
     average_precision_score,
     confusion_matrix,
@@ -10,7 +9,6 @@ from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
 from churn.preprocessing import create_preprocessor
-
 
 DATA_PATH = "data/raw/Bank CUstomer Churn Prediction.csv"
 MODEL_PATH = "models/churn_pipeline.joblib"
@@ -31,18 +29,18 @@ def create_model():
 
 
 def create_pipeline():
-    return Pipeline([
-        ("preprocessor", create_preprocessor()),
-        ("model", create_model()),
-    ])
+    return Pipeline(
+        [
+            ("preprocessor", create_preprocessor()),
+            ("model", create_model()),
+        ]
+    )
 
 
 def train():
     df = pd.read_csv(DATA_PATH)
 
-    X = df.drop(
-        columns=["churn", "customer_id"]
-    )
+    X = df.drop(columns=["churn", "customer_id"])
     y = df["churn"]
 
     # -------------------------
@@ -90,9 +88,7 @@ def train():
     # 4. Validate business threshold
     # -------------------------
 
-    val_pred = (
-        val_proba >= THRESHOLD
-    ).astype(int)
+    val_pred = (val_proba >= THRESHOLD).astype(int)
 
     tn, fp, fn, tp = confusion_matrix(
         y_val,
@@ -112,13 +108,9 @@ def train():
     # 5. Final training
     # -------------------------
 
-    X_final = pd.concat(
-        [X_train, X_val]
-    )
+    X_final = pd.concat([X_train, X_val])
 
-    y_final = pd.concat(
-        [y_train, y_val]
-    )
+    y_final = pd.concat([y_train, y_val])
 
     final_pipeline = create_pipeline()
 
@@ -136,9 +128,7 @@ def train():
         MODEL_PATH,
     )
 
-    print(
-        f"Final model saved to {MODEL_PATH}"
-    )
+    print(f"Final model saved to {MODEL_PATH}")
 
 
 if __name__ == "__main__":

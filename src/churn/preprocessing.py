@@ -1,7 +1,6 @@
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
 
-
 NUMERICAL_FEATURES = [
     "credit_score",
     "age",
@@ -29,9 +28,7 @@ def create_preprocessor():
             ),
             (
                 "cat",
-                OneHotEncoder(
-                    handle_unknown="ignore"
-                ),
+                OneHotEncoder(handle_unknown="ignore"),
                 CATEGORICAL_FEATURES,
             ),
         ]

@@ -25,6 +25,7 @@ dev = [
     "pytest",
     "httpx2",
     "numpy==2.4.6",
+    "ruff==0.13.0",
 ]
 
 
@@ -35,3 +36,17 @@ pythonpath = ["."]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+]
+
+[tool.ruff.format]
+quote-style = "double"

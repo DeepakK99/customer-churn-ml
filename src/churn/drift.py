@@ -26,12 +26,10 @@ def calculate_psi(
     reference_pct = np.clip(reference_pct, epsilon, None)
     current_pct = np.clip(current_pct, epsilon, None)
 
-    psi = np.sum(
-        (current_pct - reference_pct)
-        * np.log(current_pct / reference_pct)
-    )
+    psi = np.sum((current_pct - reference_pct) * np.log(current_pct / reference_pct))
 
     return float(psi)
+
 
 def interpret_psi(psi: float) -> str:
     if psi < 0.10:
