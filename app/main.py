@@ -1,10 +1,12 @@
 import logging
 import time
+from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
 
 from app.logging_config import configure_logging
+from churn.model_manager import ensure_model
 from churn.predict import load_model, predict_churn
 
 configure_logging()
@@ -12,8 +14,24 @@ configure_logging()
 logger = logging.getLogger(__name__)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("application_startup | checking model")
+
+    ensure_model()
+
+    app.state.model = load_model()
+
+    logger.info("application_startup | model loaded")
+
+    yield
+
+    logger.info("application_shutdown")
+
+
 def get_model():
-    return load_model()
+    return app.state.model
+    # return load_model()
 
 
 class CustomerRequest(BaseModel):
@@ -29,10 +47,7 @@ class CustomerRequest(BaseModel):
     estimated_salary: float = Field(ge=0)
 
 
-app = FastAPI(
-    title="Customer Churn Prediction API",
-    version="1.0.0",
-)
+app = FastAPI(title="Customer Churn Prediction API", version="1.0.0", lifespan=lifespan)
 
 
 @app.get("/health")

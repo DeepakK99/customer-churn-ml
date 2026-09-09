@@ -13,8 +13,6 @@ class FakeModel:
 
 app.dependency_overrides[get_model] = lambda: FakeModel()
 
-client = TestClient(app)
-
 
 def test_health():
     response = client.get("/health")
@@ -67,3 +65,24 @@ def test_predict_invalid_age():
     response = client.post("/predict", json=customer)
 
     assert response.status_code == 422
+
+
+def test_startup_loads_model(monkeypatch):
+    from app import main
+
+    fake_model = FakeModel()
+
+    monkeypatch.setattr(
+        main,
+        "ensure_model",
+        lambda: None,
+    )
+
+    monkeypatch.setattr(
+        main,
+        "load_model",
+        lambda: fake_model,
+    )
+
+    with TestClient(main.app):
+        assert main.app.state.model is fake_model

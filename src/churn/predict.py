@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import joblib
 import pandas as pd
 
@@ -6,7 +8,12 @@ THRESHOLD = 0.31
 
 
 def load_model():
-    return joblib.load(MODEL_PATH)
+    model_path = Path(MODEL_PATH)
+
+    if not model_path.exists():
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+
+    return joblib.load(model_path)
 
 
 def predict_churn(model, customer: dict):
