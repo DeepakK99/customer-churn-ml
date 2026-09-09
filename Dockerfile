@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir .
 # 3. Copy your live, changing code and files AFTER dependencies are installed
 COPY src/ ./src/
 COPY app/ ./app/
-COPY models/ ./models/
+# COPY models/ ./models/ # removing model dependency while image build
 
 # 4. Instant Link: Register your 'src' package locally without re-downloading anything
 RUN pip install --no-cache-dir --no-deps .
