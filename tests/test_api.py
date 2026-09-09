@@ -1,7 +1,17 @@
+import numpy as np
+
+from app.main import app, get_model
 from fastapi.testclient import TestClient
 
-from app.main import app
+client = TestClient(app)
 
+
+class FakeModel:
+    def predict_proba(self, X):
+        return np.array([[0.2, 0.8]])
+
+
+app.dependency_overrides[get_model] = lambda: FakeModel()
 
 client = TestClient(app)
 
@@ -38,6 +48,7 @@ def test_predict():
 
     assert 0 <= result["churn_probability"] <= 1
     assert result["churn_prediction"] in [0, 1]
+
 
 def test_predict_invalid_age():
     customer = {

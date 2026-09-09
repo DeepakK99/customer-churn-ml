@@ -1,6 +1,6 @@
 import logging
 import time
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from churn.predict import load_model, predict_churn
 
 from pydantic import BaseModel, Field
@@ -10,6 +10,8 @@ configure_logging()
 
 logger = logging.getLogger(__name__)
 
+def get_model():
+    return load_model()
 
 class CustomerRequest(BaseModel):
     credit_score: int = Field(ge=300, le=850)
@@ -37,9 +39,16 @@ model = load_model()
 def health():
     return {"status": "ok"}
 
+@app.post("/predict")
+def predict(
+    customer: CustomerRequest,
+    model=Depends(get_model),
+):
+    return predict_churn(model, customer.model_dump())
 
 @app.post("/predict")
-def predict(customer: CustomerRequest):
+def predict(customer: CustomerRequest,
+            model=Depends(get_model)):
     start = time.perf_counter()
 
     result = predict_churn(model, customer.model_dump())
