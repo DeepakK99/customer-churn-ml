@@ -31,20 +31,9 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
-model = load_model()
-
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
-
-@app.post("/predict")
-def predict(
-    customer: CustomerRequest,
-    model=Depends(get_model),
-):
-    return predict_churn(model, customer.model_dump())
 
 @app.post("/predict")
 def predict(customer: CustomerRequest,
