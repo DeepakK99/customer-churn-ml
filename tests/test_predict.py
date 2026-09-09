@@ -1,8 +1,14 @@
-from churn.predict import load_model, predict_churn
+import numpy as np
+from churn.predict import predict_churn
+
+
+class FakeModel:
+    def predict_proba(self, X):
+        return np.array([[0.2, 0.8]])
 
 
 def test_predict_churn():
-    model = load_model()
+    model = FakeModel()
 
     customer = {
         "credit_score": 650,
@@ -22,5 +28,5 @@ def test_predict_churn():
     assert "churn_probability" in result
     assert "churn_prediction" in result
 
-    assert 0 <= result["churn_probability"] <= 1
-    assert result["churn_prediction"] in [0, 1]
+    assert result["churn_probability"] == 0.8
+    assert result["churn_prediction"] == 1
