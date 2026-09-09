@@ -21,9 +21,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Debug OIDC claims
-        uses: github/actions-oidc-debugger@v1
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
