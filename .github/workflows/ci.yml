@@ -43,6 +43,13 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t customer-churn-api .
+      
+      - name: Show GitHub repository identifiers
+        run: |
+          echo "repository=${{ github.repository }}"
+          echo "repository_owner_id=${{ github.repository_owner_id }}"
+          echo "repository_id=${{ github.repository_id }}"
+          echo "ref=${{ github.ref }}"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
