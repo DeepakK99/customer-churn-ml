@@ -42,7 +42,8 @@ jobs:
         run: pytest
 
       - name: Build Docker image
-        run: docker build -t customer-churn-api .
+        run: |
+          docker build -t customer-churn-api .
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
@@ -50,6 +51,21 @@ jobs:
           role-to-assume: arn:aws:iam::532287339230:role/GitHubActionsECRRole
           aws-region: ap-south-1
           role-session-name: GitHubActions
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Push Docker image to ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY: customer-churn-ml
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker tag customer-churn-api:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker tag customer-churn-api:latest $REGISTRY/$REPOSITORY:latest
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:latest
 
       - name: Verify AWS identity
         run: aws sts get-caller-identity
