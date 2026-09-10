@@ -59,7 +59,7 @@ jobs:
       - name: Push Docker image to ECR
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: customer-churn-ml
+          REPOSITORY: customer-churn-api
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker tag customer-churn-api:latest $REGISTRY/$REPOSITORY:$IMAGE_TAG
